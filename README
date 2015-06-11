@@ -1,1 +1,1 @@
-ruby -e "$(curl -fsSL https://raw.githubusercontent.com/runeleaf/initializer/rails-4.2-develop/bin/install)
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/runeleaf/initializer/rails-4.2-develop/bin/install)"

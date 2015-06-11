@@ -9,7 +9,7 @@ version_url='https://raw.githubusercontent.com/runeleaf/initializer/rails-4.2-de
 puts version_url
 
 puts 'mkdir'
-`mkdir app/views/shared'
+`mkdir app/views/shared`
 
 puts 'get files.'
 
