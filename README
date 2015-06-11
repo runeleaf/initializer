@@ -1,0 +1,71 @@
+@note install
+  curl -sL https://github.com/runeleaf/init-bootstrap.sh | sh
+
+@note curl
+  curl https://example/Gemfile ./Gemfile
+  curl https://example/config/locales/* config/locales/
+  curl https://example/config/initializers/draper.rb config/initializers/draper.rb
+  curl https://example/config/initializers/errbit.rb config/initializers/errbit.rb
+
+  curl https://example/app/assets/stylesheets/application.css.scss app/assets/stylesheets/
+  curl https://example/app/assets/stylesheets/generals.css.scss app/assets/stylesheets/
+  curl https://example/app/assets/stylesheets/jquery.sidr.dark.css app/assets/stylesheets/
+
+  curl https://example/app/assets/javascripts/application.js app/assets/javascripts/
+  curl https://example/app/assets/javascripts/generals.js.coffee app/assets/javascripts/
+  curl https://example/app/assets/javascripts/jquery.sidr.min.js app/assets/javascripts/
+
+  curl https://example/app/helpers/application_helper.rb app/helpers/
+  curl https://example/app/views/layouts/application.html.erb app/views/layouts/
+  curl https://example/app/views/shared/* app/views/shared/
+
+@note command
+
+  cp config/environments/production.rb config/environments/develop.rb
+  cp config/environments/production.rb config/environments/staging.rb
+
+  bundle install --path vendor/bundle
+
+  bundle exec rails g annotate:install
+  bundle exec rails g devise:install
+  bundle exec rails g active_admin:install
+  bundle exec rails g devise users
+  bundle exec rails g devise:controllers users
+  bundle exec rails g devise:views
+  bundle exec cap install STAGES=develop,staging,production
+  bundle exec wheneverize .
+
+@note rewrite
+
+  config/application.rb
+    config.time_zone = 'Tokyo'
+    config.i18n.default_locale = :ja
+
+  config/environments/development.rb
+    config.action_mailer.default_url_options = { host: 'localhost:3000' }
+
+  config/secrets.yml
+    production:
+      secret_key_base: <%= ENV["SECRET_KEY_BASE"] %>
+
+  config/initializers/devise.rb
+    config.secret_key = 'SECRET_KEY'
+    config.mailer_sender = 'MAIL_ADDRESS'
+
+  config/initializers/errbit.rb
+    config.api_key = 'API_KEY'
+
+  config/routes.rb
+      devise_for :users, controllers: {
+        sessions: "users/sessions",
+        registrations: "users/registrations",
+        passwords: "users/passwords",
+        confirmatios: "users/confirmations",
+        unlocks: "users/unlocks",
+        omniauth_callbacks: "users/omniauth_callbacks"
+      }
+      devise_scope :user do
+        get "/users/sign_up", to: "users/registrations#new", as: :signup
+        get "/users/sign_in", to: "users/sessions#new", as: :login
+        delete "/users/sign_out", to: "users/sessions#destroy", as: :logout
+      end

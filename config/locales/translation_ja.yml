@@ -1,0 +1,26 @@
+ja:
+  activerecord:
+    models:
+      user: ユーザー
+      profile: プロフィール
+      admin_user: 管理者
+
+    attributes:
+
+      user:
+        email: メールアドレス
+        password: パスワード
+        password_confirmation: パスワード確認
+        remember_me: ログイン情報を記憶する
+        current_password: 現在のパスワード
+
+      profile:
+        name: 名前
+        nickname: ニックネーム
+        birthday: 誕生日
+        zip_code: 郵便番号
+        address1: 住所
+        address2: 住所2
+        tel1: 連絡先
+
+
