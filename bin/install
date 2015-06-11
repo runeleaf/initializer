@@ -1,0 +1,90 @@
+#!/usr/bin/env ruby
+
+#require 'color_echo'
+#CE.fg(:yellow)
+
+curl_cmd='curl -sS -o'
+version_url='https://raw.githubusercontent.com/runeleaf/initializer/rails-4.2-develop'
+
+puts version_url
+
+puts 'mkdir'
+`mkdir app/views/shared'
+
+puts 'get files.'
+
+`#{curl_cmd} Gemfile #{version_url}/Gemfile`
+`#{curl_cmd} config/locales/devise.ja.yml #{version_url}/config/locales/devise.ja.yml`
+`#{curl_cmd} config/locales/ja.yml #{version_url}/config/locales/ja.yml`
+`#{curl_cmd} config/locales/translation_ja.yml #{version_url}/config/locales/translation_ja.yml`
+`#{curl_cmd} config/initializers/draper.rb #{version_url}/config/initializers/draper.rb`
+`#{curl_cmd} config/initializers/errbit.rb #{version_url}/config/initializers/errbit.rb`
+`#{curl_cmd} app/assets/stylesheets/application.css.scss #{version_url}/app/assets/stylesheets/application.css.scss`
+`#{curl_cmd} app/assets/stylesheets/generals.css.scss #{version_url}/app/assets/stylesheets/generals.css.scss`
+`#{curl_cmd} app/assets/stylesheets/jquery.sidr.dark.css #{version_url}/app/assets/stylesheets/jquery.sidr.dark.css`
+`#{curl_cmd} app/assets/javascripts/application.js #{version_url}/app/assets/javascripts/application.js`
+`#{curl_cmd} app/assets/javascripts/generals.js.coffee #{version_url}/app/assets/javascripts/generals.js.coffee`
+`#{curl_cmd} app/assets/javascripts/jquery.sidr.min.js #{version_url}/app/assets/javascripts/jquery.sidr.min.js`
+`#{curl_cmd} app/helpers/application_helper.rb #{version_url}/app/helpers/application_helper.rb`
+`#{curl_cmd} app/views/layouts/application.html.erb #{version_url}/app/views/layouts/application.html.erb`
+`#{curl_cmd} app/views/shared/_menu.html.erb #{version_url}/app/views/shared/_menu.html.erb`
+`#{curl_cmd} app/views/shared/_errors.html.erb #{version_url}/app/views/shared/_errors.html.erb`
+`#{curl_cmd} app/views/shared/_notice.html.erb #{version_url}/app/views/shared/_notice.html.erb`
+
+puts 'cp files'
+
+`cp config/environments/production.rb config/environments/develop.rb`
+`cp config/environments/production.rb config/environments/staging.rb`
+
+puts 'bundle install'
+
+`bundle install --path vendor/bundle`
+
+puts 'execute command.'
+
+`bundle exec rails g annotate:install`
+`bundle exec rails g devise:install`
+`bundle exec rails g active_admin:install`
+`bundle exec rails g devise users`
+`bundle exec rails g devise:controllers users`
+`bundle exec rails g devise:views`
+`bundle exec cap install STAGES=develop,staging,production`
+`bundle exec wheneverize .`
+
+puts <<EOS
+  @note rewirte files.
+
+  config/application.rb
+    config.time_zone = 'Tokyo'
+    config.i18n.default_locale = :ja
+ 
+  config/environments/development.rb
+    config.action_mailer.default_url_options = { host: 'localhost:3000' }
+ 
+  config/secrets.yml
+    production:
+      secret_key_base: <%= ENV["SECRET_KEY_BASE"] %>
+ 
+  config/initializers/devise.rb
+    config.secret_key = 'SECRET_KEY'
+    config.mailer_sender = 'MAIL_ADDRESS'
+ 
+  config/initializers/errbit.rb
+    config.api_key = 'API_KEY'
+ 
+  config/routes.rb
+      devise_for :users, controllers: {
+        sessions: "users/sessions",
+        registrations: "users/registrations",
+        passwords: "users/passwords",
+        confirmatios: "users/confirmations",
+        unlocks: "users/unlocks",
+        omniauth_callbacks: "users/omniauth_callbacks"
+      }
+      devise_scope :user do
+        get "/users/sign_up", to: "users/registrations#new", as: :signup
+        get "/users/sign_in", to: "users/sessions#new", as: :login
+        delete "/users/sign_out", to: "users/sessions#destroy", as: :logout
+      end
+EOS
+
