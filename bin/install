@@ -48,7 +48,7 @@ puts 'execute command.'
 `bundle exec rails g devise users`
 `bundle exec rails g devise:controllers users`
 `bundle exec rails g devise:views`
-`bundle exec cap install STAGES=develop,staging,production`
+`bundle exec cap install STAGES=sandbox,staging,production`
 `bundle exec wheneverize .`
 
 puts <<EOS
